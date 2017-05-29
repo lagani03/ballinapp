@@ -38,4 +38,9 @@ public class RequestController {
     public void deleteAllRequests(@PathVariable Long teamId) {
         requestService.deleteAllRequests(teamId);
     }
+    
+    @RequestMapping(value = "/requests/{requestId}/{response}", method = RequestMethod.PUT)
+    public void requestResponse(@PathVariable int requestId, @PathVariable boolean response) {
+        requestService.requestResponse(requestId, response);
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ballinapp.dao.GameDao;
 import com.ballinapp.data.PublicGame;
 import com.ballinapp.data.Team;
+import com.ballinapp.exceptions.InvalidDataException;
 
 @Service
 public class GameService {
@@ -26,11 +27,17 @@ public class GameService {
 
     public void createGame(PublicGame publicGame) {
         try {
-            gameDao.openCurrentSessionwithTransaction();
-            gameDao.createGame(publicGame);
-            gameDao.closeCurrentSessionwithTransaction();
+            if(validateGame(publicGame)) {
+                gameDao.openCurrentSessionwithTransaction();
+                gameDao.createGame(publicGame);
+                gameDao.closeCurrentSessionwithTransaction();
+            } else {
+                throw new InvalidDataException("Invalid data entered!");
+            }
         } catch(Exception e) {
-            gameDao.getCurrentTransaction().rollback();
+            if(gameDao.getCurrentTransaction().isActive()) {
+                gameDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if(gameDao.getCurrentSession().isConnected()) {
                 gameDao.closeCurrentSession();
@@ -58,7 +65,9 @@ public class GameService {
             gameDao.joinGame(gameId, team);
             gameDao.closeCurrentSessionwithTransaction();
         } catch(Exception e) {
-            gameDao.getCurrentTransaction().rollback();
+            if(gameDao.getCurrentTransaction().isActive()) {
+                gameDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if(gameDao.getCurrentSession().isConnected()) {
                 gameDao.closeCurrentSession();
@@ -79,11 +88,85 @@ public class GameService {
             gameDao.leaveGame(gameId, team);
             gameDao.closeCurrentSessionwithTransaction();
         } catch(Exception e) {
-            gameDao.getCurrentTransaction().rollback();
+            if(gameDao.getCurrentTransaction().isActive()) {
+                gameDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if(gameDao.getCurrentSession().isConnected()) {
                 gameDao.closeCurrentSession();
             }
         }
+    }
+    
+    private boolean validateGame(PublicGame game) {
+        String message = game.getMessage();
+        String contact = game.getContact();
+        String state = game.getState();
+        String city = game.getCity();
+        String address = game.getAddress();
+        String date = game.getDate();
+        String time = game.getTime();
+        
+        boolean msg = false;
+        boolean cnt = false;
+        boolean sta = false;
+        boolean cit = false;
+        boolean add = false;
+        boolean dat = false;
+        boolean tim = false;
+        
+        if(!message.isEmpty()) {
+            msg = true;
+        }
+        
+        if(!contact.isEmpty() && contact.length() < 35) {
+            cnt = true;
+        }
+        
+        if (state.length() < 25 && !state.isEmpty()) {
+            int character = 0;
+            for (int i = 0; i < state.length(); i++) {
+                if (Character.isDigit(state.charAt(i))) {
+                    character++;
+                }
+            }
+            if (character == 0) {
+                sta = true;
+            }
+        }
+        
+        if (city.length() < 20 && !city.isEmpty()) {
+            int character = 0;
+            for (int i = 0; i < city.length(); i++) {
+                if (Character.isDigit(city.charAt(i))) {
+                    character++;
+                }
+            }
+            if (character == 0) {
+                cit = true;
+            }
+        }
+        
+        if(!address.isEmpty() && address.length() < 35) {
+            add = true;
+        }
+        
+        if(!date.isEmpty() && date.length() < 20) {
+            dat = true;
+        }
+        
+        if (!time.isEmpty() && time.length() < 6) {
+            int letter = 0;
+            for(int i = 0; i < time.length(); i++) {
+                if(Character.isLetter(time.charAt(i))) {
+                    letter++;
+                }
+            }
+            if(letter == 0) {
+                tim = true;
+            }
+        }
+        
+        return msg && cnt && sta && cit && add & dat & tim;
     }
 }

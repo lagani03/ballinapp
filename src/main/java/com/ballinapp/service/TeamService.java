@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ballinapp.dao.TeamDao;
 import com.ballinapp.data.Player;
 import com.ballinapp.data.Team;
+import com.ballinapp.exceptions.InvalidDataException;
 
 @Service
 public class TeamService {
@@ -44,7 +45,9 @@ public class TeamService {
             teamDao.addTeam(team);
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
-            teamDao.getCurrentTransaction().rollback();
+            if(teamDao.getCurrentTransaction().isActive()) {
+                teamDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if (teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
@@ -54,11 +57,17 @@ public class TeamService {
 
     public void updateTeam(Team team, Long id) {
         try {
-            teamDao.openCurrentSessionwithTransaction();
-            teamDao.updateTeam(team, id);
-            teamDao.closeCurrentSessionwithTransaction();
+            if(validateUpdateTeam(team)) {
+                teamDao.openCurrentSessionwithTransaction();
+                teamDao.updateTeam(team, id);
+                teamDao.closeCurrentSessionwithTransaction();
+            } else {
+                throw new InvalidDataException("Invalid data entered!");
+            }
         } catch (Exception e) {
-            teamDao.getCurrentTransaction().rollback();
+            if(teamDao.getCurrentTransaction().isActive()) {
+                teamDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if (teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
@@ -82,11 +91,17 @@ public class TeamService {
 
     public void addPlayer(Player player, Long id) {
         try {
-            teamDao.openCurrentSessionwithTransaction();
-            teamDao.addPlayer(player, id);
-            teamDao.closeCurrentSessionwithTransaction();
+            if(validatePlayer(player)) {
+                teamDao.openCurrentSessionwithTransaction();
+                teamDao.addPlayer(player, id);
+                teamDao.closeCurrentSessionwithTransaction();
+            } else {
+                throw new InvalidDataException("Invalid data entered!");
+            }
         } catch (Exception e) {
-            teamDao.getCurrentTransaction().rollback();
+            if(teamDao.getCurrentTransaction().isActive()) {
+                teamDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if (teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
@@ -100,7 +115,9 @@ public class TeamService {
             teamDao.deletePlayer(id);
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
-            teamDao.getCurrentTransaction().rollback();
+            if(teamDao.getCurrentTransaction().isActive()) {
+                teamDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if (teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
@@ -128,7 +145,9 @@ public class TeamService {
             teamDao.updateTeamAvailability(teamId);
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
-            teamDao.getCurrentTransaction().rollback();
+            if(teamDao.getCurrentTransaction().isActive()) {
+                teamDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if (teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
@@ -142,7 +161,9 @@ public class TeamService {
             teamDao.updateAppearancePlus(teamId);
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
-            teamDao.getCurrentTransaction().rollback();
+            if(teamDao.getCurrentTransaction().isActive()) {
+                teamDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if (teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
@@ -156,7 +177,9 @@ public class TeamService {
             teamDao.updateAppearanceMinus(teamId);
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
-            teamDao.getCurrentTransaction().rollback();
+            if(teamDao.getCurrentTransaction().isActive()) {
+                teamDao.getCurrentTransaction().rollback();
+            }
         } finally {
             if (teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
@@ -169,5 +192,74 @@ public class TeamService {
         boolean check = teamDao.checkAccount(id);
         teamDao.closeCurrentSession();
         return check;
+    }
+    
+    private boolean validateUpdateTeam(Team team) {
+        boolean teamName = false;
+        boolean teamState = false;
+        boolean teamCity = false;
+        boolean teamEmail = false;
+
+        if (team.getName().length() < 25 && !team.getName().isEmpty()) {
+            teamName = true;
+        }
+
+        if (team.getState().length() < 25 && !team.getState().isEmpty()) {
+            int character = 0;
+            for (int i = 0; i < team.getState().length(); i++) {
+                if (Character.isDigit(team.getState().charAt(i))) {
+                    character++;
+                }
+            }
+            if (character == 0) {
+                teamState = true;
+            }
+        }
+
+        if (team.getCity().length() < 20 && !team.getCity().isEmpty()) {
+            int character = 0;
+            for (int i = 0; i < team.getCity().length(); i++) {
+                if (Character.isDigit(team.getCity().charAt(i))) {
+                    character++;
+                }
+            }
+            if (character == 0) {
+                teamCity = true;
+            }
+        }
+
+        if (!team.getEmail().isEmpty()) {
+            int at = 0;
+            int dot = 0;
+            for (int i = 0; i < team.getEmail().length(); i++) {
+                if (team.getEmail().charAt(i) == '@') {
+                    at++;
+                } else if (team.getEmail().charAt(i) == '.') {
+                    dot++;
+                }
+            }
+            if (at > 0 && dot > 0) {
+                teamEmail = true;
+            }
+        }
+
+        return teamName && teamState && teamCity && teamEmail;
+    }
+    
+    private boolean validatePlayer(Player player) {
+        boolean nickname = false;
+        boolean birthyear = false;
+        
+        if(!player.getNickname().isEmpty() && player.getNickname().length() < 20) {
+            nickname = true;
+        }
+        
+        String byStr = String.valueOf(player.getBirthyear());
+        
+        if(!byStr.isEmpty() && byStr.length() == 4) {
+            birthyear = true;
+        }
+        
+        return nickname && birthyear;
     }
 }

@@ -95,4 +95,9 @@ public class RequestDao {
         String sql = "DELETE FROM request WHERE receiver_team_id = ?";
         getCurrentSession().createSQLQuery(sql).setLong(0, teamId).executeUpdate();
     }
+    
+    public void requestResponse(int requestId, boolean response) {
+        String sql = "UPDATE request SET status = ? WHERE request_id = ?";
+        getCurrentSession().createSQLQuery(sql).setBoolean(0, response).setInteger(1, requestId).executeUpdate();
+    }
 }

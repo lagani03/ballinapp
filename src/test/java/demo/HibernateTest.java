@@ -1,15 +1,11 @@
 package demo;
 
-import org.hibernate.Session;
-
-import com.ballinapp.util.HibernateUtil;
+import com.ballinapp.data.PublicGame;
 
 public class HibernateTest {
 
-	public static void main(String[] args) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		
-		session.close();
-	}
-
+    public static void main(String[] args) {
+        PublicGame game = new PublicGame();
+    }
+    
 }
