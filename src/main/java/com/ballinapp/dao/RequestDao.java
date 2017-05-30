@@ -75,13 +75,14 @@ public class RequestDao {
     public List<NewRequest> getRequests(Long id) {
         List<NewRequest> newRequests = new ArrayList<>();
         String sql = "SELECT team.name, request.message, request.contact, request.state, "
-                + "request.city, request.date, request.time, request.address, request.sent_at "
+                + "request.city, request.date, request.time, request.address, request.sent_at, request.request_id, request.status "
                 + "FROM team INNER JOIN request ON team.team_id = request.sender_team_id WHERE receiver_team_id = ?;";
         SQLQuery query = getCurrentSession().createSQLQuery(sql);
         List<Object[]> rows = query.setLong(0, id).list();
         rows.forEach((row) -> {
             newRequests.add(new NewRequest(row[0].toString(), row[1].toString(), row[2].toString(), row[3].toString(),
-                    row[4].toString(), row[5].toString(), row[6].toString(), row[7].toString(), row[8].toString()));
+                    row[4].toString(), row[5].toString(), row[6].toString(), row[7].toString(), row[8].toString(),
+                    Integer.parseInt(row[9].toString()), Boolean.parseBoolean(row[10].toString())));
         });
         
         return newRequests;

@@ -133,21 +133,20 @@ public class TeamDao {
         return teams;
     }
 
-    public Team getTeamByName(String name) {
+    public List<Team> getTeamByName(String name) {
+        List<Team> teams = new ArrayList<>();
         String sql = "SELECT team_id, name, state, city, appearance_plus, appearance_minus, open FROM team WHERE name LIKE ?";
 
         SQLQuery query = getCurrentSession().createSQLQuery(sql);
 
-        Team team = null;
-
         List<Object[]> rows = query.setString(0, name).list();
         for (Object[] row : rows) {
-            team = new Team(Long.parseLong(row[0].toString()), row[1].toString(), row[2].toString(), row[3].toString(),
+            teams.add(new Team(Long.parseLong(row[0].toString()), row[1].toString(), row[2].toString(), row[3].toString(),
                     Integer.parseInt(row[4].toString()), Integer.parseInt(row[5].toString()),
-                    Boolean.parseBoolean(row[6].toString()));
+                    Boolean.parseBoolean(row[6].toString())));
         }
 
-        return team;
+        return teams;
     }
 
     public void updateTeamAvailability(Long teamId) {

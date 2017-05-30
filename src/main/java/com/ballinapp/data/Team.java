@@ -178,15 +178,19 @@ public class Team {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Name: ");
+                sb.append(id);
+                sb.append(",");
 		sb.append(name);
-		sb.append("\n");
-		sb.append("State: ");
+		sb.append(",");
 		sb.append(state);
-		sb.append("\n");
-		sb.append("City: ");
+                sb.append(",");
 		sb.append(city);
-		sb.append("\n");
+		sb.append(",");
+                sb.append(appearance_plus);
+                sb.append(",");
+                sb.append(appearance_minus);
+                sb.append(",");
+                sb.append(open);
 		return sb.toString();
 	}
 	

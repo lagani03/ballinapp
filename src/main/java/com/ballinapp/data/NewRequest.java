@@ -1,6 +1,7 @@
 package com.ballinapp.data;
 
 public class NewRequest {
+    private int id;
     private String opponentName;
     private String message;
     private String contact;
@@ -10,8 +11,9 @@ public class NewRequest {
     private String date;
     private String time;
     private String sentAt;
+    private boolean status;
 
-    public NewRequest(String opponentName, String message, String contact, String state, String city, String date, String time, String address, String sentAt) {
+    public NewRequest(String opponentName, String message, String contact, String state, String city, String date, String time, String address, String sentAt, int id, boolean status) {
         this.opponentName = opponentName;
         this.message = message;
         this.contact = contact;
@@ -21,6 +23,8 @@ public class NewRequest {
         this.date = date;
         this.time = time;
         this.sentAt = normalizeTimestamp(sentAt);
+        this.id = id;
+        this.status = status;
     }
 
     public String getOpponentName() {
@@ -160,5 +164,20 @@ public class NewRequest {
         
         return sb.toString();
     }
-    
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 }

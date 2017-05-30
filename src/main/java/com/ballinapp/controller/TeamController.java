@@ -65,7 +65,7 @@ public class TeamController {
     }
 
     @RequestMapping(value = "/team/{teamName}", method = RequestMethod.GET)
-    public Team getTeamByName(@PathVariable String teamName) {
+    public List<Team> getTeamByName(@PathVariable String teamName) {
         return teamService.getTeamByName(teamName);
     }
 

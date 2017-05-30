@@ -132,11 +132,11 @@ public class TeamService {
         return teams;
     }
 
-    public Team getTeamByName(String name) {
+    public List<Team> getTeamByName(String name) {
         teamDao.openCurrentSession();
-        Team team = teamDao.getTeamByName(name);
+        List<Team> teams = teamDao.getTeamByName(name);
         teamDao.closeCurrentSession();
-        return team;
+        return teams;
     }
 
     public void updateTeamAvailability(Long teamId) {
