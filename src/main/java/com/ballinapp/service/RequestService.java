@@ -91,6 +91,29 @@ public class RequestService {
         }
     }
     
+    public List<NewRequest> getSentRequests(Long teamId) {
+        requestDao.openCurrentSession();
+        List<NewRequest> requests = requestDao.getSentRequests(teamId);
+        requestDao.closeCurrentSession();
+        return requests;
+    }
+    
+    public void deleteRequest(int requestId) {
+        try{
+            requestDao.openCurrentSessionwithTransaction();
+            requestDao.deleteRequest(requestId);
+            requestDao.closeCurrentSessionwithTransaction();
+        } catch(Exception e) {
+            if(requestDao.getCurrentTransaction().isActive()) {
+                requestDao.getCurrentTransaction().rollback();
+            }
+        } finally {
+            if(requestDao.getCurrentSession().isConnected()) {
+                requestDao.closeCurrentSession();
+            }
+        }
+    }
+    
     private boolean validateRequest(Request request) {
         String message = request.getMessage();
         String contact = request.getContact();

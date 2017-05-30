@@ -34,7 +34,7 @@ public class RequestController {
         return requestService.getRequests(id);
     }
 
-    @RequestMapping(value = "/requests/{teamId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/requests/all/{teamId}", method = RequestMethod.DELETE)
     public void deleteAllRequests(@PathVariable Long teamId) {
         requestService.deleteAllRequests(teamId);
     }
@@ -42,5 +42,15 @@ public class RequestController {
     @RequestMapping(value = "/requests/{requestId}/{response}", method = RequestMethod.PUT)
     public void requestResponse(@PathVariable int requestId, @PathVariable boolean response) {
         requestService.requestResponse(requestId, response);
+    }
+    
+    @RequestMapping(value = "/requests/sent/{teamId}", method = RequestMethod.GET)
+    public List<NewRequest> getSentRequests(@PathVariable Long teamId) {
+        return requestService.getSentRequests(teamId);
+    }
+    
+    @RequestMapping(value = "/requests/{requestId}", method = RequestMethod.DELETE)
+    public void deleteRequest(@PathVariable int requestId) {
+        requestService.deleteRequest(requestId);
     }
 }

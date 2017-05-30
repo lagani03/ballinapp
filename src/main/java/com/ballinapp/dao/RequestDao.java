@@ -101,4 +101,24 @@ public class RequestDao {
         String sql = "UPDATE request SET status = ? WHERE request_id = ?";
         getCurrentSession().createSQLQuery(sql).setBoolean(0, response).setInteger(1, requestId).executeUpdate();
     }
+    
+    public void deleteRequest(int requestId) {
+        String sql = "DELETE FROM request WHERE request_id = ?";
+        getCurrentSession().createSQLQuery(sql).setInteger(0, requestId).executeUpdate();
+    }
+    
+    public List<NewRequest> getSentRequests(Long teamId) {
+        List<NewRequest> requests = new ArrayList<>();
+        String sql = "SELECT request.message, (SELECT name FROM team WHERE team_id = receiver_team_id) as opponent, "
+                + "request.status, request.contact, request.state, request.city, request.address, request.date, request.time, "
+                + "request.sent_at, request.request_id FROM request INNER JOIN team ON request.sender_team_id = team.team_id WHERE sender_team_id = ?;";
+        SQLQuery query = getCurrentSession().createSQLQuery(sql);
+        List<Object[]> rows = query.setLong(0, teamId).list();
+        rows.forEach((row) -> {
+            requests.add(new NewRequest(row[1].toString(), row[0].toString(), row[3].toString(), row[4].toString(),
+                    row[5].toString(), row[7].toString(), row[8].toString(), row[6].toString(),
+                    row[9].toString(), Integer.parseInt(row[10].toString()) ,Boolean.parseBoolean(row[2].toString())));
+        });
+        return requests;
+    }
 }

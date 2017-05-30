@@ -26,6 +26,19 @@ public class NewRequest {
         this.id = id;
         this.status = status;
     }
+    
+    public NewRequest(String opponentName, String message, String contact, String state, String city, String date, String time, String address, String sentAt, boolean status) {
+        this.opponentName = opponentName;
+        this.message = message;
+        this.contact = contact;
+        this.state = state;
+        this.city = city;
+        this.address = address;
+        this.date = date;
+        this.time = time;
+        this.sentAt = normalizeTimestamp(sentAt);
+        this.status = status;
+    }
 
     public String getOpponentName() {
         return opponentName;
@@ -99,7 +112,7 @@ public class NewRequest {
         this.sentAt = sentAt;
     }
     
-    private String normalizeTimestamp(String timestamp) {
+    public static String normalizeTimestamp(String timestamp) {
         String[] split = timestamp.split(" ");
         
         String dates = split[0];
