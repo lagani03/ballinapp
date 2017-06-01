@@ -155,33 +155,17 @@ public class TeamService {
         }
     }
 
-    public void updateAppearancePlus(Long teamId) {
+    public void updateAppearance(Long teamId, String value) {
         try {
             teamDao.openCurrentSessionwithTransaction();
-            teamDao.updateAppearancePlus(teamId);
+            teamDao.updateAppearance(teamId, value);
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
             if(teamDao.getCurrentTransaction().isActive()) {
                 teamDao.getCurrentTransaction().rollback();
             }
         } finally {
-            if (teamDao.getCurrentSession().isConnected()) {
-                teamDao.closeCurrentSession();
-            }
-        }
-    }
-
-    public void updateAppearanceMinus(Long teamId) {
-        try {
-            teamDao.openCurrentSessionwithTransaction();
-            teamDao.updateAppearanceMinus(teamId);
-            teamDao.closeCurrentSessionwithTransaction();
-        } catch (Exception e) {
-            if(teamDao.getCurrentTransaction().isActive()) {
-                teamDao.getCurrentTransaction().rollback();
-            }
-        } finally {
-            if (teamDao.getCurrentSession().isConnected()) {
+            if(teamDao.getCurrentSession().isConnected()) {
                 teamDao.closeCurrentSession();
             }
         }

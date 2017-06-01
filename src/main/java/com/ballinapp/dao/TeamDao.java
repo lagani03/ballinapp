@@ -159,15 +159,13 @@ public class TeamDao {
         getCurrentSession().save(team);
     }
 
-    public void updateAppearancePlus(Long teamId) {
+    public void updateAppearance(Long teamId, String value) {
         Team team = (Team) getCurrentSession().get(Team.class, teamId);
-        team.setAppearance_plus(team.getAppearance_plus() + 1);
-        getCurrentSession().save(team);
-    }
-
-    public void updateAppearanceMinus(Long teamId) {
-        Team team = (Team) getCurrentSession().get(Team.class, teamId);
-        team.setAppearance_minus(team.getAppearance_minus() + 1);
+        if("plus".equals(value)) {
+            team.setAppearance_plus(team.getAppearance_plus() + 1);
+        } else {
+            team.setAppearance_minus(team.getAppearance_minus() + 1);
+        }
         getCurrentSession().save(team);
     }
 
@@ -183,5 +181,4 @@ public class TeamDao {
 
         return i != 0;
     }
-
 }

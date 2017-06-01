@@ -74,14 +74,9 @@ public class TeamController {
         teamService.updateTeamAvailability(teamId);
     }
 
-    @RequestMapping(value = "/teams/{teamId}/plus", method = RequestMethod.PUT)
-    public void updateAppearancePlus(@PathVariable Long teamId) {
-        teamService.updateAppearancePlus(teamId);
-    }
-
-    @RequestMapping(value = "/teams/{teamId}/minus", method = RequestMethod.PUT)
-    public void updateAppearanceMinus(@PathVariable Long teamId) {
-        teamService.updateAppearanceMinus(teamId);
+    @RequestMapping(value = "/teams/{teamId}/appearance/{value}", method = RequestMethod.PUT)
+    public void updateAppearance(@PathVariable Long teamId, @PathVariable String value) {
+        teamService.updateAppearance(teamId, value);
     }
 
     @RequestMapping(value = "/teams/check/{id}", method = RequestMethod.GET)
