@@ -121,4 +121,9 @@ public class RequestDao {
         });
         return requests;
     }
+
+    public void removeFromMyRequests(int requestId) {
+        String sql = "UPDATE request SET receiver_team_id = 0 WHERE request_id = ?";
+        getCurrentSession().createSQLQuery(sql).setInteger(0, requestId).executeUpdate();
+    }
 }

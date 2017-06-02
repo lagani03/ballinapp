@@ -53,4 +53,9 @@ public class RequestController {
     public void deleteRequest(@PathVariable int requestId) {
         requestService.deleteRequest(requestId);
     }
+    
+    @RequestMapping(value = "/requests/{requestId}", method = RequestMethod.PUT)
+    public void removeFromMyRequests(@PathVariable int requestId) {
+        requestService.removeFromMyRequests(requestId);
+    }
 }

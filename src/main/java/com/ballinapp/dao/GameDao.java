@@ -90,9 +90,9 @@ public class GameDao {
     }
 
     public void joinGame(int gameId, Team team) {
-        PublicGame publicGame = (PublicGame) getCurrentSession().get(PublicGame.class, gameId);
-        publicGame.getTeams().add(team);
-        getCurrentSession().save(publicGame);
+        String sql = "INSERT INTO public_game_team(public_game_id, team_id) VALUES (?, ?);";
+        Long teamId = team.getId();
+        getCurrentSession().createSQLQuery(sql).setInteger(0, gameId).setLong(1, teamId).executeUpdate();
     }
 
     public List<PublicGame> getGamesByTeam(Long id) {

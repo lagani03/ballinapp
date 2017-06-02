@@ -99,9 +99,25 @@ public class RequestService {
     }
     
     public void deleteRequest(int requestId) {
-        try{
+        try {
             requestDao.openCurrentSessionwithTransaction();
             requestDao.deleteRequest(requestId);
+            requestDao.closeCurrentSessionwithTransaction();
+        } catch(Exception e) {
+            if(requestDao.getCurrentTransaction().isActive()) {
+                requestDao.getCurrentTransaction().rollback();
+            }
+        } finally {
+            if(requestDao.getCurrentSession().isConnected()) {
+                requestDao.closeCurrentSession();
+            }
+        }
+    }
+    
+    public void removeFromMyRequests(int requestId) {
+        try {
+            requestDao.openCurrentSessionwithTransaction();
+            requestDao.removeFromMyRequests(requestId);
             requestDao.closeCurrentSessionwithTransaction();
         } catch(Exception e) {
             if(requestDao.getCurrentTransaction().isActive()) {
@@ -185,4 +201,6 @@ public class RequestService {
         
         return msg && cnt && sta && cit && add & dat & tim;
     }
+
+    
 }

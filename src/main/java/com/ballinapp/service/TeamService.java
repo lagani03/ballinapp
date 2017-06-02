@@ -241,9 +241,16 @@ public class TeamService {
         String byStr = String.valueOf(player.getBirthyear());
         
         if(!byStr.isEmpty() && byStr.length() == 4) {
-            birthyear = true;
+            int chr = 0;
+            for(int i = 0; i < byStr.length(); i++) {
+                if(Character.isLetter(byStr.charAt(i))) {
+                    chr++;
+                }
+            }
+            if(chr == 0) {
+                birthyear = true;
+            }
         }
-        
         return nickname && birthyear;
     }
 }
