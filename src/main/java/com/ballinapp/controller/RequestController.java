@@ -24,21 +24,11 @@ public class RequestController {
         requestService.sendRequest(request);
     }
 
-    @RequestMapping(value = "/requests/{id}", method = RequestMethod.GET)
-    public Request getRequestById(@PathVariable int id) {
-        return requestService.getRequestById(id);
-    }
-
     @RequestMapping(value = "/requests/new/{id}", method = RequestMethod.GET)
     public List<NewRequest> getRequests(@PathVariable Long id) {
         return requestService.getRequests(id);
     }
 
-    @RequestMapping(value = "/requests/all/{teamId}", method = RequestMethod.DELETE)
-    public void deleteAllRequests(@PathVariable Long teamId) {
-        requestService.deleteAllRequests(teamId);
-    }
-    
     @RequestMapping(value = "/requests/{requestId}/{response}", method = RequestMethod.PUT)
     public void requestResponse(@PathVariable int requestId, @PathVariable boolean response) {
         requestService.requestResponse(requestId, response);

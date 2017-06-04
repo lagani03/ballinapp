@@ -24,11 +24,6 @@ public class TeamController {
         return teamService.getTeamById(id);
     }
 
-    @RequestMapping(value = "/teams", method = RequestMethod.GET)
-    public List<Team> getAllTeams() {
-        return teamService.getAllTeams();
-    }
-
     @RequestMapping(value = "/teams", method = RequestMethod.POST)
     public void addTeam(@RequestBody Team team) {
         teamService.addTeam(team);

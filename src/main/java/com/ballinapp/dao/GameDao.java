@@ -67,11 +67,6 @@ public class GameDao {
         getCurrentSession().save(publicGame);
     }
 
-    public List<PublicGame> getAllGames() {
-        List<PublicGame> games = (List<PublicGame>) getCurrentSession().createCriteria(PublicGame.class).list();
-        return games;
-    }
-
     public List<PublicGame> findGamesByCity(String city) {
         List<PublicGame> games = new ArrayList<>();
 

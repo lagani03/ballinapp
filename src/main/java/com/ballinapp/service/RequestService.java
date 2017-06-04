@@ -45,13 +45,6 @@ public class RequestService {
         }
     }
 
-    public Request getRequestById(int id) {
-        requestDao.openCurrentSession();
-        Request request = requestDao.getRequestById(id);
-        requestDao.closeCurrentSession();
-        return request;
-    }
-
     public List<NewRequest> getRequests(Long id) {
         requestDao.openCurrentSession();
         List<NewRequest> requests = requestDao.getRequests(id);
@@ -59,22 +52,6 @@ public class RequestService {
         return requests;
     }
 
-    public void deleteAllRequests(Long teamId) {
-        try {
-            requestDao.openCurrentSessionwithTransaction();
-            requestDao.deleteAllRequests(teamId);
-            requestDao.closeCurrentSessionwithTransaction();
-        } catch(Exception e) {
-            if(requestDao.getCurrentTransaction().isActive()) {
-                requestDao.getCurrentTransaction().rollback();
-            }
-        } finally {
-            if(requestDao.getCurrentSession().isConnected()) {
-                requestDao.closeCurrentSession();
-            }
-        }
-    }
-    
     public void requestResponse(int requestId, boolean response) {
         try {
             requestDao.openCurrentSessionwithTransaction();

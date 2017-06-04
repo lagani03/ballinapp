@@ -67,12 +67,6 @@ public class TeamDao {
         return team;
     }
 
-    public List<Team> getAllTeams() {
-        @SuppressWarnings("unchecked")
-        List<Team> teams = (ArrayList<Team>) getCurrentSession().createCriteria(Team.class).list();
-        return teams;
-    }
-
     public void addTeam(Team team) {
         getCurrentSession().save(team);
     }

@@ -24,11 +24,6 @@ public class GameController {
         gameService.createGame(publicGame);
     }
 
-    @RequestMapping(value = "/games", method = RequestMethod.GET)
-    public List<PublicGame> getAllGames() {
-        return gameService.getAllGames();
-    }
-
     @RequestMapping(value = "/games/{city}", method = RequestMethod.GET)
     public List<PublicGame> findGamesByCity(@PathVariable String city) {
         return gameService.findGamesByCity(city);

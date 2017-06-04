@@ -32,13 +32,6 @@ public class TeamService {
         return team;
     }
 
-    public List<Team> getAllTeams() {
-        teamDao.openCurrentSession();
-        List<Team> teams = teamDao.getAllTeams();
-        teamDao.closeCurrentSession();
-        return teams;
-    }
-
     public void addTeam(Team team) {
         try {
             teamDao.openCurrentSessionwithTransaction();

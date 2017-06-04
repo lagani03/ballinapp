@@ -45,13 +45,6 @@ public class GameService {
         }
     }
 
-    public List<PublicGame> getAllGames() {
-        gameDao.openCurrentSession();
-        List<PublicGame> games = gameDao.getAllGames();
-        gameDao.closeCurrentSession();
-        return games;
-    }
-
     public List<PublicGame> findGamesByCity(String city) {
         gameDao.openCurrentSession();
         List<PublicGame> games = gameDao.findGamesByCity(city);
