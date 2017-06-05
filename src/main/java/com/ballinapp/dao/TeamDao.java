@@ -133,8 +133,7 @@ public class TeamDao {
 
         SQLQuery query = getCurrentSession().createSQLQuery(sql);
 
-        @SuppressWarnings("unchecked")
-		List<Object[]> rows = query.setString(0, name).list();
+        List<Object[]> rows = query.setString(0, name).list();
         for (Object[] row : rows) {
             teams.add(new Team(Long.parseLong(row[0].toString()), row[1].toString(), row[2].toString(), row[3].toString(),
                     Integer.parseInt(row[4].toString()), Integer.parseInt(row[5].toString()),
@@ -171,27 +170,9 @@ public class TeamDao {
 
         int i = 0;
 
-        @SuppressWarnings("unchecked")
-		List<Object[]> rows = query.setLong(0, id).list();
+        List<Object[]> rows = query.setLong(0, id).list();
         i = rows.stream().map((_item) -> 1).reduce(i, Integer::sum);
 
         return i != 0;
-    }
-    
-    public boolean authenticate(String token, Long id) {
-    	String sql = "SELECT * FROM team WHERE access_token = ? and team_id = ?";
-    	SQLQuery query = getCurrentSession().createSQLQuery(sql);
-    	int i = 0;
-    	@SuppressWarnings("unchecked")
-		List<Object[]> rows = query.setString(0, token).setLong(1, id).list();
-        for (@SuppressWarnings("unused") Object[] row : rows) {
-        	i++;
-        }
-        
-        if(i == 0) {
-        	return false;
-        }
-    	
-    	return true;
     }
 }

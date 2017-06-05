@@ -99,8 +99,7 @@ public class GameDao {
 
         SQLQuery query = getCurrentSession().createSQLQuery(sql);
 
-        @SuppressWarnings("unchecked")
-		List<Object[]> rows = query.setLong(0, id).list();
+        List<Object[]> rows = query.setLong(0, id).list();
         rows.forEach((row) -> {
             games.add(new PublicGame(Integer.parseInt(row[0].toString()), row[1].toString(), row[2].toString(),
                     row[3].toString(), row[4].toString(), row[5].toString(), row[6].toString(), row[7].toString()));
@@ -120,22 +119,5 @@ public class GameDao {
         }
         publicGame.getTeams().remove(newTeam);
         getCurrentSession().save(publicGame);
-    }
-    
-    public boolean authenticate(String token, Long id) {
-    	String sql = "SELECT * FROM team WHERE access_token = ? and team_id = ?";
-    	SQLQuery query = getCurrentSession().createSQLQuery(sql);
-    	int i = 0;
-    	@SuppressWarnings("unchecked")
-		List<Object[]> rows = query.setString(0, token).setLong(1, id).list();
-        for (@SuppressWarnings("unused") Object[] row : rows) {
-        	i++;
-        }
-        
-        if(i == 0) {
-        	return false;
-        }
-    	
-    	return true;
     }
 }

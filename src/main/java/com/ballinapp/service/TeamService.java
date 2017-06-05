@@ -171,13 +171,6 @@ public class TeamService {
         return check;
     }
     
-    public boolean authenticate(String token, Long id) {
-    	teamDao.openCurrentSession();
-    	boolean auth = teamDao.authenticate(token, id);
-    	teamDao.closeCurrentSession();
-    	return auth;
-    }
-    
     private boolean validateUpdateTeam(Team team) {
         boolean teamName = false;
         boolean teamState = false;

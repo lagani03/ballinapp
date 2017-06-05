@@ -91,13 +91,6 @@ public class GameService {
         }
     }
     
-    public boolean authenticate(String token, Long id) {
-    	gameDao.openCurrentSession();
-    	boolean auth = gameDao.authenticate(token, id);
-    	gameDao.closeCurrentSession();
-    	return auth;
-    }
-    
     private boolean validateGame(PublicGame game) {
         String message = game.getMessage();
         String contact = game.getContact();
