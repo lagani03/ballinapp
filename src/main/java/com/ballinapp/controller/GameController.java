@@ -14,6 +14,8 @@ import com.ballinapp.data.PublicGame;
 import com.ballinapp.data.Team;
 import com.ballinapp.exceptions.AuthenticationException;
 import com.ballinapp.service.GameService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 public class GameController {
@@ -22,57 +24,60 @@ public class GameController {
     private final GameService gameService = GameService.getInstance();
 
     @RequestMapping(value = "/games", method = RequestMethod.POST)
-    public void createGame(@RequestBody PublicGame publicGame, @RequestHeader(value = "Authorization") String token,
-    						@RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
-    	if(authenticate(token, idCheck)) {
-    		gameService.createGame(publicGame);
-    	} else {
-    		throw new AuthenticationException("Credentials not approved!");
-    	}
+    public ResponseEntity<Void> createGame(@RequestBody PublicGame publicGame, @RequestHeader(value = "Authorization") String token,
+            @RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
+        if (authenticate(token, idCheck)) {
+            gameService.createGame(publicGame);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/games/{city}", method = RequestMethod.GET)
-    public List<PublicGame> findGamesByCity(@PathVariable String city, @RequestHeader(value = "Authorization") String token,
-    											@RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
-    	if(authenticate(token, idCheck)) {
-    		return gameService.findGamesByCity(city);
-    	} else {
-    		throw new AuthenticationException("Credentials not approved!");
-    	}
+    public ResponseEntity<List<PublicGame>> findGamesByCity(@PathVariable String city, @RequestHeader(value = "Authorization") String token,
+            @RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
+        if (authenticate(token, idCheck)) {
+            return new ResponseEntity<>(gameService.findGamesByCity(city), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @RequestMapping(value = "/games/{gameId}", method = RequestMethod.POST)
-    public void joinGame(@PathVariable int gameId, @RequestBody Team team, @RequestHeader(value = "Authorization") String token,
-    						@RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
-    	if(authenticate(token, idCheck)) {
-    		gameService.joinGame(gameId, team);
-    	} else {
-    		throw new AuthenticationException("Credentials not approved!");
-    	}
+    public ResponseEntity<Void> joinGame(@PathVariable int gameId, @RequestBody Team team, @RequestHeader(value = "Authorization") String token,
+            @RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
+        if (authenticate(token, idCheck)) {
+            gameService.joinGame(gameId, team);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
-    public List<PublicGame> getGamesByTeam(@PathVariable Long id, @RequestHeader(value = "Authorization") String token,
-    										@RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
-    	if(authenticate(token, idCheck)) {
-    		return gameService.getGamesByTeam(id);
-    	} else {
-    		throw new AuthenticationException("Credentials not approved!");
-    	}
+    public ResponseEntity<List<PublicGame>> getGamesByTeam(@PathVariable Long id, @RequestHeader(value = "Authorization") String token,
+            @RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
+        if (authenticate(token, idCheck)) {
+            return new ResponseEntity<>(gameService.getGamesByTeam(id), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @RequestMapping(value = "/games/{gameId}", method = RequestMethod.DELETE)
-    public void leaveGame(@PathVariable int gameId, @RequestBody Team team, @RequestHeader(value = "Authorization") String token,
-    						@RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
-    	if(authenticate(token, idCheck)) {
-    		gameService.leaveGame(gameId, team);
-    	} else {
-    		throw new AuthenticationException("Credentials not approved!");
-    	}
+    public ResponseEntity<Void> leaveGame(@PathVariable int gameId, @RequestBody Team team, @RequestHeader(value = "Authorization") String token,
+            @RequestHeader(value = "ID-Check") Long idCheck) throws AuthenticationException {
+        if (authenticate(token, idCheck)) {
+            gameService.leaveGame(gameId, team);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     public boolean authenticate(String token, Long id) {
-		return gameService.authenticate(token, id);
-	}
+        return gameService.authenticate(token, id);
+    }
 
 }
