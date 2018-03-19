@@ -1,6 +1,9 @@
-package com.ballinapp.data;
+package com.ballinapp.data.info;
+
+import com.ballinapp.util.UtilMethods;
 
 public class NewRequest {
+
     private int id;
     private String opponentName;
     private String message;
@@ -22,7 +25,7 @@ public class NewRequest {
         this.address = address;
         this.date = date;
         this.time = time;
-        this.sentAt = normalizeTimestamp(sentAt);
+        this.sentAt = UtilMethods.normalizeTimestamp(sentAt);
         this.id = id;
         this.status = status;
     }
@@ -36,7 +39,7 @@ public class NewRequest {
         this.address = address;
         this.date = date;
         this.time = time;
-        this.sentAt = normalizeTimestamp(sentAt);
+        this.sentAt = UtilMethods.normalizeTimestamp(sentAt);
         this.status = status;
     }
 
@@ -110,72 +113,6 @@ public class NewRequest {
 
     public void setSentAt(String sentAt) {
         this.sentAt = sentAt;
-    }
-    
-    public static String normalizeTimestamp(String timestamp) {
-        String[] split = timestamp.split(" ");
-        
-        String dates = split[0];
-        String year = dates.substring(0, 4);
-        String month = dates.substring(5, 7);
-        String day = dates.substring(8, 10);
-        
-        switch(month) {
-                case "01":
-                    month = "Jan";
-                    break;
-                case "02":
-                    month = "Feb";
-                    break;
-                case "03":
-                    month = "Mar";
-                    break;
-                case "04":
-                    month = "Apr";
-                    break;
-                case "05":
-                    month = "May";
-                    break;
-                case "06":
-                    month = "Jun";
-                    break;
-                case "07":
-                    month = "Jul";
-                    break;
-                case "08":
-                    month = "Aug";
-                    break;
-                case "09":
-                    month = "Sep";
-                    break;
-                case "10":
-                    month = "Oct";
-                    break;
-                case "11":
-                    month = "Nov";
-                    break;
-                case "12":
-                    month = "Dec";
-                    break;
-        }
-        
-        if(day.charAt(0) == '0') {
-            day = day.substring(1);
-        }
-        
-        String times = split[1].substring(0, 5);
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append(day);
-        sb.append(". ");
-        sb.append(month);
-        sb.append(" ");
-        sb.append(year);
-        sb.append(". ");
-        sb.append(times);
-        sb.append("h");
-        
-        return sb.toString();
     }
 
     public int getId() {

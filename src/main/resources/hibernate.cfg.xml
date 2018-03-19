@@ -9,7 +9,7 @@
 
         <!-- Database connection settings -->
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/demo_schema</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/ballinapp</property>
         <property name="connection.username">root</property>
         <property name="connection.password">root</property>
 
@@ -27,10 +27,10 @@
         <property name="hibernate.dbcp.minIdle">5</property>
         <property name="hibernate.dbcp.maxWaitMillis">-1</property>
 
-        <mapping class="com.ballinapp.data.Team"/>
-        <mapping class="com.ballinapp.data.Player"/>
-        <mapping class="com.ballinapp.data.Request"/>
-        <mapping class="com.ballinapp.data.PublicGame"/>
+        <mapping class="com.ballinapp.data.model.Team"/>
+        <mapping class="com.ballinapp.data.model.Player"/>
+        <mapping class="com.ballinapp.data.model.Request"/>
+        <mapping class="com.ballinapp.data.model.PublicGame"/>
         
     </session-factory>
 

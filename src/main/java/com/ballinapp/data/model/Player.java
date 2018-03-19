@@ -1,7 +1,4 @@
-package com.ballinapp.data;
-
-import java.sql.Blob;
-import java.util.Date;
+package com.ballinapp.data.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,23 +7,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "player")
 public class Player {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "player_id")
+	@Column(name = "id")
 	private int id;
 	
 	@Column(name = "nickname")
 	private String nickname;
 	
 	@Column(name = "created_at")
-	private Date created_at;
-	
-	@Column(name = "picture")
-	private Blob picture;
+	private Date createdAt;
 	
 	@Column(name = "birthyear")
 	private int birthyear;
@@ -63,20 +59,12 @@ public class Player {
 		this.nickname = nickname;
 	}
 
-	public Date getCreated_at() {
-		return created_at;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreated_at(Date created_at) {
-		this.created_at = created_at;
-	}
-
-	public Blob getPicture() {
-		return picture;
-	}
-
-	public void setPicture(Blob picture) {
-		this.picture = picture;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public int getBirthyear() {
@@ -94,5 +82,5 @@ public class Player {
 	public void setContact(String contact) {
 		this.contact = contact;
 	}
-	
+
 }

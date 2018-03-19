@@ -1,7 +1,8 @@
-package com.ballinapp.data;
+package com.ballinapp.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.sql.Blob;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,9 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -19,8 +23,9 @@ import javax.persistence.Table;
 public class Team {
 
 	@Id
-	@Column(name = "team_id")
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private int id;
 
 	@Column(name = "name")
 	private String name;
@@ -29,13 +34,13 @@ public class Team {
 	private String state;
 
 	@Column(name = "appearance_plus")
-	private int appearance_plus;
+	private int appearancePlus;
 
 	@Column(name = "appearance_minus")
-	private int appearance_minus;
+	private int appearanceMinus;
 
 	@Column(name = "created_at")
-	private Date created_at;
+	private Date createdAt;
 
 	@Column(name = "open")
 	private boolean open;
@@ -49,16 +54,9 @@ public class Team {
 	@Column(name = "city")
 	private String city;
 
-	@Column(name = "picture")
-	private Blob picture;
-
-	@Column(name = "access_token")
-	private String access_token;
-
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "team_id", nullable = false)
-	@JsonIgnore
-	List<Player> players = new ArrayList<>();
+	private List<Player> players = new ArrayList<>();
 
 	public Team(String name, String state, boolean open, boolean active, String email, String city) {
 		this.name = name;
@@ -69,10 +67,9 @@ public class Team {
 		this.city = city;
 	}
 
-	public Team() {
-	};
+	public Team() {}
 
-	public Team(Long id, String name, String state, String email, String city) {
+	public Team(int id, String name, String state, String email, String city) {
 		this.id = id;
 		this.name = name;
 		this.state = state;
@@ -80,31 +77,31 @@ public class Team {
 		this.city = city;
 	}
 
-	public Team(String name, String state, String city, int appearance_plus, int appearance_minus, boolean open) {
+	public Team(String name, String state, String city, int appearancePlus, int appearanceMinus, boolean open) {
 		this.name = name;
 		this.state = state;
-		this.appearance_plus = appearance_plus;
-		this.appearance_minus = appearance_minus;
+		this.appearancePlus = appearancePlus;
+		this.appearanceMinus = appearanceMinus;
 		this.open = open;
 		this.city = city;
 	}
 
-	public Team(Long id, String name, String state, String city, int appearance_plus, int appearance_minus,
+	public Team(int id, String name, String state, String city, int appearancePlus, int appearanceMinus,
 			boolean open) {
 		this.id = id;
 		this.name = name;
 		this.state = state;
-		this.appearance_plus = appearance_plus;
-		this.appearance_minus = appearance_minus;
+		this.appearancePlus = appearancePlus;
+		this.appearanceMinus = appearanceMinus;
 		this.open = open;
 		this.city = city;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -124,12 +121,12 @@ public class Team {
 		this.state = state;
 	}
 
-	public Date getCreated_at() {
-		return created_at;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreated_at(Date created_at) {
-		this.created_at = created_at;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public boolean isOpen() {
@@ -164,28 +161,20 @@ public class Team {
 		this.city = city;
 	}
 
-	public Blob getPicture() {
-		return picture;
+	public int getAppearancePlus() {
+		return appearancePlus;
 	}
 
-	public void setPicture(Blob picture) {
-		this.picture = picture;
+	public void setAppearancePlus(int appearance_plus) {
+		this.appearancePlus = appearance_plus;
 	}
 
-	public int getAppearance_plus() {
-		return appearance_plus;
+	public int getAppearanceMinus() {
+		return appearanceMinus;
 	}
 
-	public void setAppearance_plus(int appearance_plus) {
-		this.appearance_plus = appearance_plus;
-	}
-
-	public int getAppearance_minus() {
-		return appearance_minus;
-	}
-
-	public void setAppearance_minus(int appearance_minus) {
-		this.appearance_minus = appearance_minus;
+	public void setAppearanceMinus(int appearance_minus) {
+		this.appearanceMinus = appearance_minus;
 	}
 
 	public List<Player> getPlayers() {
@@ -194,14 +183,6 @@ public class Team {
 
 	public void setPlayers(List<Player> players) {
 		this.players = players;
-	}
-
-	public String getAccess_token() {
-		return access_token;
-	}
-
-	public void setAccess_token(String access_token) {
-		this.access_token = access_token;
 	}
 
 	@Override
@@ -215,9 +196,9 @@ public class Team {
 		sb.append(",");
 		sb.append(city);
 		sb.append(",");
-		sb.append(appearance_plus);
+		sb.append(appearancePlus);
 		sb.append(",");
-		sb.append(appearance_minus);
+		sb.append(appearanceMinus);
 		sb.append(",");
 		sb.append(open);
 		return sb.toString();

@@ -25,18 +25,17 @@ DROP TABLE IF EXISTS `player`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `player` (
-  `player_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team_id` bigint(20) NOT NULL,
   `nickname` varchar(45) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `picture` blob,
   `birthyear` int(11) DEFAULT NULL,
   `contact` varchar(80) DEFAULT NULL,
-  PRIMARY KEY (`player_id`),
+  PRIMARY KEY (`id`),
   KEY `username_idx` (`nickname`),
   KEY `fk_player_team_id_idx` (`team_id`),
-  CONSTRAINT `fk_player_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8;
+  CONSTRAINT `fk_player_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,7 +46,7 @@ DROP TABLE IF EXISTS `public_game`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `public_game` (
-  `public_game_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `message` text NOT NULL,
   `contact` varchar(60) NOT NULL,
   `state` varchar(45) NOT NULL,
@@ -55,8 +54,8 @@ CREATE TABLE `public_game` (
   `address` varchar(45) NOT NULL,
   `date` varchar(45) NOT NULL,
   `time` varchar(45) NOT NULL,
-  PRIMARY KEY (`public_game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,11 +67,11 @@ DROP TABLE IF EXISTS `public_game_team`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `public_game_team` (
   `public_game_id` int(10) unsigned NOT NULL,
-  `team_id` bigint(20) NOT NULL,
+  `team_id` int(11) NOT NULL,
   KEY `fk_public_game_team_public_game_id_idx` (`public_game_id`),
   KEY `fk_public_game_team_team_id_idx` (`team_id`),
-  CONSTRAINT `fk_public_game_team_public_game_id` FOREIGN KEY (`public_game_id`) REFERENCES `public_game` (`public_game_id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_public_game_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`) ON UPDATE CASCADE
+  CONSTRAINT `fk_public_game_team_public_game_id` FOREIGN KEY (`public_game_id`) REFERENCES `public_game` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_public_game_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -84,7 +83,7 @@ DROP TABLE IF EXISTS `request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `request` (
-  `request_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `sent_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `message` text NOT NULL,
   `sender_team_id` bigint(20) NOT NULL,
@@ -96,12 +95,12 @@ CREATE TABLE `request` (
   `address` varchar(45) NOT NULL,
   `date` varchar(45) NOT NULL,
   `time` varchar(45) NOT NULL,
-  PRIMARY KEY (`request_id`),
+  PRIMARY KEY (`id`),
   KEY `fk_request_receiver_team_id_idx` (`receiver_team_id`),
   KEY `fk_request_sender_team_id_idx` (`sender_team_id`),
-  CONSTRAINT `fk_request_receiver_team_id` FOREIGN KEY (`receiver_team_id`) REFERENCES `team` (`team_id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_request_sender_team_id` FOREIGN KEY (`sender_team_id`) REFERENCES `team` (`team_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+  CONSTRAINT `fk_request_receiver_team_id` FOREIGN KEY (`receiver_team_id`) REFERENCES `team` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_request_sender_team_id` FOREIGN KEY (`sender_team_id`) REFERENCES `team` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -112,7 +111,7 @@ DROP TABLE IF EXISTS `team`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `team` (
-  `team_id` bigint(20) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
   `state` varchar(60) DEFAULT NULL,
   `appearance_plus` int(11) NOT NULL DEFAULT '0',
@@ -122,11 +121,7 @@ CREATE TABLE `team` (
   `active` bit(1) NOT NULL DEFAULT b'1',
   `email` varchar(88) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
-  `picture` longblob,
-  `last_edited_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `access_token` varchar(255) NOT NULL,
-  PRIMARY KEY (`team_id`),
-  UNIQUE KEY `access_token_UNIQUE` (`access_token`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `uq_name` (`name`),
   UNIQUE KEY `uq_email` (`email`),
   KEY `name_idx` (`name`)

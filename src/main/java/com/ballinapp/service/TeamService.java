@@ -2,18 +2,23 @@ package com.ballinapp.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ballinapp.data.info.AppearanceUpdateBean;
+import com.ballinapp.data.info.PlayerInfo;
+import com.ballinapp.data.info.TeamInfo;
+import com.ballinapp.data.model.Team;
+import com.ballinapp.enum_values.AppearanceUpdateEnum;
+import com.ballinapp.enum_values.MappingTypeEnum;
+import com.ballinapp.mapping.PlayerMapper;
+import com.ballinapp.mapping.TeamMapper;
+import com.ballinapp.util.UtilMethods;
 import org.springframework.stereotype.Service;
 
 import com.ballinapp.dao.TeamDao;
-import com.ballinapp.data.Player;
-import com.ballinapp.data.Team;
 import com.ballinapp.exceptions.InvalidDataException;
 
 @Service
 public class TeamService {
-    
-    @Autowired
+
     private static TeamDao teamDao;
     
     private static final TeamService instance = new TeamService();
@@ -25,17 +30,20 @@ public class TeamService {
         return instance;
     }
 
-    public Team getTeamById(Long id) {
-        teamDao.openCurrentSession();
-        Team team = teamDao.getTeamById(id);
-        teamDao.closeCurrentSession();
-        return team;
+    private TeamMapper teamMapper = new TeamMapper();
+
+    public TeamInfo getTeamById(int id) {
+        teamDao.openCurrentSessionwithTransaction();
+        TeamInfo teamInfo = teamMapper.mapToInfo(teamDao.getTeamById(id));
+        teamDao.closeCurrentSessionwithTransaction();
+        return teamInfo;
     }
 
-    public void addTeam(Team team) {
+    public void addTeam(TeamInfo team) {
         try {
             teamDao.openCurrentSessionwithTransaction();
-            teamDao.addTeam(team);
+            setDefaultTeamValues(team);
+            teamDao.addTeam(teamMapper.mapToModel(team, MappingTypeEnum.ADD));
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
             if(teamDao.getCurrentTransaction().isActive()) {
@@ -48,11 +56,11 @@ public class TeamService {
         }
     }
 
-    public void updateTeam(Team team, Long id) {
+    public void updateTeam(TeamInfo team, int id) {
         try {
-            if(validateUpdateTeam(team)) {
+            if(UtilMethods.validateUpdateTeam(team)) {
                 teamDao.openCurrentSessionwithTransaction();
-                teamDao.updateTeam(team, id);
+                teamDao.updateTeam(teamMapper.mapToModel(team, MappingTypeEnum.UPDATE), id);
                 teamDao.closeCurrentSessionwithTransaction();
             } else {
                 throw new InvalidDataException("Invalid data entered!");
@@ -68,71 +76,21 @@ public class TeamService {
         }
     }
 
-    public List<Player> getAllPlayersByTeam(Long id) {
+    public List<TeamInfo> getTeamsByCity(String cityName) {
         teamDao.openCurrentSession();
-        List<Player> players = teamDao.getAllPlayersByTeam(id);
+        List<TeamInfo> infoList = teamMapper.mapToInfoList(teamDao.getTeamsByCity(cityName));
         teamDao.closeCurrentSession();
-        return players;
+        return infoList;
     }
 
-    public Player getPlayerById(int id) {
+    public List<TeamInfo> getTeamByName(String name) {
         teamDao.openCurrentSession();
-        Player player = teamDao.getPlayerById(id);
+        List<TeamInfo> infoList = teamMapper.mapToInfoList(teamDao.getTeamByName(name));
         teamDao.closeCurrentSession();
-        return player;
+        return infoList;
     }
 
-    public void addPlayer(Player player, Long id) {
-        try {
-            if(validatePlayer(player)) {
-                teamDao.openCurrentSessionwithTransaction();
-                teamDao.addPlayer(player, id);
-                teamDao.closeCurrentSessionwithTransaction();
-            } else {
-                throw new InvalidDataException("Invalid data entered!");
-            }
-        } catch (Exception e) {
-            if(teamDao.getCurrentTransaction().isActive()) {
-                teamDao.getCurrentTransaction().rollback();
-            }
-        } finally {
-            if (teamDao.getCurrentSession().isConnected()) {
-                teamDao.closeCurrentSession();
-            }
-        }
-    }
-
-    public void deletePlayer(int id) {
-        try {
-            teamDao.openCurrentSessionwithTransaction();
-            teamDao.deletePlayer(id);
-            teamDao.closeCurrentSessionwithTransaction();
-        } catch (Exception e) {
-            if(teamDao.getCurrentTransaction().isActive()) {
-                teamDao.getCurrentTransaction().rollback();
-            }
-        } finally {
-            if (teamDao.getCurrentSession().isConnected()) {
-                teamDao.closeCurrentSession();
-            }
-        }
-    }
-
-    public List<Team> getTeamsByCity(String cityName) {
-        teamDao.openCurrentSession();
-        List<Team> teams = teamDao.getTeamsByCity(cityName);
-        teamDao.closeCurrentSession();
-        return teams;
-    }
-
-    public List<Team> getTeamByName(String name) {
-        teamDao.openCurrentSession();
-        List<Team> teams = teamDao.getTeamByName(name);
-        teamDao.closeCurrentSession();
-        return teams;
-    }
-
-    public void updateTeamAvailability(Long teamId) {
+    public void updateTeamAvailability(int teamId) {
         try {
             teamDao.openCurrentSessionwithTransaction();
             teamDao.updateTeamAvailability(teamId);
@@ -148,10 +106,10 @@ public class TeamService {
         }
     }
 
-    public void updateAppearance(Long teamId, String value) {
+    public void updateAppearance(AppearanceUpdateBean bean) {
         try {
             teamDao.openCurrentSessionwithTransaction();
-            teamDao.updateAppearance(teamId, value);
+            teamDao.updateAppearance(bean.getId(), bean.getUpdateEnum());
             teamDao.closeCurrentSessionwithTransaction();
         } catch (Exception e) {
             if(teamDao.getCurrentTransaction().isActive()) {
@@ -164,93 +122,8 @@ public class TeamService {
         }
     }
 
-    public boolean checkAcount(Long id) {
-        teamDao.openCurrentSession();
-        boolean check = teamDao.checkAccount(id);
-        teamDao.closeCurrentSession();
-        return check;
-    }
-    
-    public boolean authenticate(String token, Long id) {
-    	teamDao.openCurrentSession();
-    	boolean auth = teamDao.authenticate(token, id);
-    	teamDao.closeCurrentSession();
-    	return auth;
-    }
-    
-    private boolean validateUpdateTeam(Team team) {
-        boolean teamName = false;
-        boolean teamState = false;
-        boolean teamCity = false;
-        boolean teamEmail = false;
-
-        if (team.getName().length() < 25 && !team.getName().isEmpty()) {
-            teamName = true;
-        }
-
-        if (team.getState().length() < 25 && !team.getState().isEmpty()) {
-            int character = 0;
-            for (int i = 0; i < team.getState().length(); i++) {
-                if (Character.isDigit(team.getState().charAt(i))) {
-                    character++;
-                }
-            }
-            if (character == 0) {
-                teamState = true;
-            }
-        }
-
-        if (team.getCity().length() < 20 && !team.getCity().isEmpty()) {
-            int character = 0;
-            for (int i = 0; i < team.getCity().length(); i++) {
-                if (Character.isDigit(team.getCity().charAt(i))) {
-                    character++;
-                }
-            }
-            if (character == 0) {
-                teamCity = true;
-            }
-        }
-
-        if (!team.getEmail().isEmpty()) {
-            int at = 0;
-            int dot = 0;
-            for (int i = 0; i < team.getEmail().length(); i++) {
-                if (team.getEmail().charAt(i) == '@') {
-                    at++;
-                } else if (team.getEmail().charAt(i) == '.') {
-                    dot++;
-                }
-            }
-            if (at > 0 && dot > 0) {
-                teamEmail = true;
-            }
-        }
-
-        return teamName && teamState && teamCity && teamEmail;
-    }
-    
-    private boolean validatePlayer(Player player) {
-        boolean nickname = false;
-        boolean birthyear = false;
-        
-        if(!player.getNickname().isEmpty() && player.getNickname().length() < 20) {
-            nickname = true;
-        }
-        
-        String byStr = String.valueOf(player.getBirthyear());
-        
-        if(!byStr.isEmpty() && byStr.length() == 4) {
-            int chr = 0;
-            for(int i = 0; i < byStr.length(); i++) {
-                if(Character.isLetter(byStr.charAt(i))) {
-                    chr++;
-                }
-            }
-            if(chr == 0) {
-                birthyear = true;
-            }
-        }
-        return nickname && birthyear;
+    private void setDefaultTeamValues(TeamInfo team) {
+        team.setOpen(true);
+        team.setActive(true);
     }
 }
