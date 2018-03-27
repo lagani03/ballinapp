@@ -1,10 +1,16 @@
 package com.ballinapp.util;
 
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+
 import com.ballinapp.data.info.PlayerInfo;
 import com.ballinapp.data.info.PublicGameInfo;
 import com.ballinapp.data.info.RequestInfo;
 import com.ballinapp.data.info.TeamInfo;
 import com.ballinapp.data.model.GameRequestMain;
+import com.ballinapp.enum_values.SecretGeneratorEnum;
+import com.google.common.hash.Hashing;
+import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * User: dusan <br/> Date: 3/11/18
@@ -371,6 +377,23 @@ public class UtilMethods {
 
     public static boolean isNotEmpty(String str) {
         return str != null && !str.trim().isEmpty();
+    }
+
+    public static String hashPassword(String password) {
+        return Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
+    }
+
+    public static String generateRandomSecret(SecretGeneratorEnum generatorEnum) {
+        int count;
+        if(SecretGeneratorEnum.SECRET.equals(generatorEnum)) {
+            count = 30;
+        } else {
+            count = 50;
+        }
+        char[] possibleCharacters = ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()" +
+                "-_=+[{]}|;:,<.>/?").toCharArray();
+        return RandomStringUtils.random(count, 0, possibleCharacters.length-1, false,
+                false, possibleCharacters, new SecureRandom());
     }
 
 }

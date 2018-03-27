@@ -28,11 +28,6 @@ public class TeamController {
         return new ResponseEntity<>(teamService.getTeamById(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/teams", method = RequestMethod.POST)
-    public void addTeam(@RequestBody TeamInfo team) {
-        teamService.addTeam(team);
-    } 
-
     @RequestMapping(value = "/teams/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> updateTeam(@RequestBody TeamInfo team, @PathVariable int id) { 
         teamService.updateTeam(team, id);

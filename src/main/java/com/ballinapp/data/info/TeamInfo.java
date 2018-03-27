@@ -19,6 +19,7 @@ public class TeamInfo {
     private boolean active;
     private String email;
     private String city;
+    private String password;
     private List<PlayerInfo> players = new ArrayList<>();
 
     public int getId() {
@@ -107,5 +108,13 @@ public class TeamInfo {
 
     public void setPlayers(List<PlayerInfo> players) {
         this.players = players;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

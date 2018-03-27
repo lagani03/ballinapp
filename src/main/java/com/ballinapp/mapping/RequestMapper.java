@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.ballinapp.data.info.RequestInfo;
 import com.ballinapp.data.model.Request;
+import com.ballinapp.data.model.Team;
 import com.ballinapp.enum_values.MappingTypeEnum;
 
 /**
@@ -35,8 +36,15 @@ public class RequestMapper implements CustomMapper<Request, RequestInfo> {
     @Override
     public Request mapToModel(RequestInfo requestInfo, MappingTypeEnum typeEnum) {
         Request request = new Request();
-        request.setSenderTeamId(teamMapper.convertToModel(requestInfo.getSenderTeam()));
-        request.setReceiverTeamId(teamMapper.convertToModel(requestInfo.getReceiverTeam()));
+
+        Team senderTeam = new Team();
+        senderTeam.setId(requestInfo.getSenderTeam());
+
+        Team receiverTeam = new Team();
+        receiverTeam.setId(requestInfo.getReceiverTeam());
+
+        request.setSenderTeamId(senderTeam);
+        request.setReceiverTeamId(receiverTeam);
         request.setMessage(requestInfo.getMessage());
         request.setContact(requestInfo.getContact());
         request.setState(requestInfo.getState());

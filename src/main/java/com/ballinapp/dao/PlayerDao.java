@@ -8,10 +8,12 @@ import com.ballinapp.dao.base_manager.Manager;
 import com.ballinapp.data.model.Player;
 import com.ballinapp.data.model.Team;
 import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  * User: dusan <br/> Date: 3/14/18
  */
+@Repository
 public class PlayerDao extends Manager {
 
     private static final PlayerDao instance = new PlayerDao();

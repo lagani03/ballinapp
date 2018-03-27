@@ -31,6 +31,7 @@
         <mapping class="com.ballinapp.data.model.Player"/>
         <mapping class="com.ballinapp.data.model.Request"/>
         <mapping class="com.ballinapp.data.model.PublicGame"/>
+        <mapping class="com.ballinapp.data.model.LoginData" />
         
     </session-factory>
 

@@ -1,16 +1,17 @@
 package com.ballinapp.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.ballinapp.data.info.AppearanceUpdateBean;
-import com.ballinapp.data.info.PlayerInfo;
+import com.ballinapp.data.info.LoginDataInfo;
 import com.ballinapp.data.info.TeamInfo;
-import com.ballinapp.data.model.Team;
-import com.ballinapp.enum_values.AppearanceUpdateEnum;
 import com.ballinapp.enum_values.MappingTypeEnum;
-import com.ballinapp.mapping.PlayerMapper;
+import com.ballinapp.jwt.JWTInfo;
+import com.ballinapp.jwt.JWTUtil;
 import com.ballinapp.mapping.TeamMapper;
 import com.ballinapp.util.UtilMethods;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import com.ballinapp.dao.TeamDao;
@@ -39,12 +40,15 @@ public class TeamService {
         return teamInfo;
     }
 
-    public void addTeam(TeamInfo team) {
+    public JWTInfo addTeam(TeamInfo team) {
         try {
             teamDao.openCurrentSessionwithTransaction();
             setDefaultTeamValues(team);
-            teamDao.addTeam(teamMapper.mapToModel(team, MappingTypeEnum.ADD));
+            LoginDataInfo loginDataInfo = teamDao.addTeam(teamMapper.mapToModel(team, MappingTypeEnum.ADD));
             teamDao.closeCurrentSessionwithTransaction();
+            Date expirationDate = DateUtils.addDays(new Date(), 3);
+            return new JWTInfo(JWTUtil.createJWT(loginDataInfo.getTeamId(), loginDataInfo.getSecret(), expirationDate),
+                    loginDataInfo.getRefresh(), loginDataInfo.getTeamId());
         } catch (Exception e) {
             if(teamDao.getCurrentTransaction().isActive()) {
                 teamDao.getCurrentTransaction().rollback();
@@ -54,6 +58,7 @@ public class TeamService {
                 teamDao.closeCurrentSession();
             }
         }
+        return null;
     }
 
     public void updateTeam(TeamInfo team, int id) {
@@ -126,4 +131,60 @@ public class TeamService {
         team.setOpen(true);
         team.setActive(true);
     }
+
+    public JWTInfo login(String name, String pass) {
+        teamDao.openCurrentSessionwithTransaction();
+        int teamId = teamDao.login(name, pass);
+        LoginDataInfo lastActiveLoginData = new LoginDataInfo();
+        if(teamId != 0) {
+            teamDao.addLoginData(teamId);
+            lastActiveLoginData = teamDao.getLastActiveLoginData(teamId);
+        }
+        teamDao.closeCurrentSessionwithTransaction();
+        if(UtilMethods.isNotEmpty(lastActiveLoginData.getSecret())) {
+            Date expirationDate = DateUtils.addDays(new Date(), 3);
+            return new JWTInfo(JWTUtil.createJWT(teamId, lastActiveLoginData.getSecret(), expirationDate), lastActiveLoginData.getRefresh(), teamId);
+        } else {
+            return null;
+        }
+    }
+
+    public String getActiveSecret(int teamId) {
+        teamDao.openCurrentSession();
+        String secret = teamDao.getLastActiveLoginData(teamId).getSecret();
+        teamDao.closeCurrentSession();
+        return secret;
+    }
+
+    public JWTInfo refreshToken(String refresh, int id) {
+        teamDao.openCurrentSessionwithTransaction();
+        int teamId = teamDao.checkRefreshToken(refresh, id);
+        LoginDataInfo lastActive = new LoginDataInfo();
+        if(teamId > 0) {
+            teamDao.addLoginData(teamId);
+            lastActive = teamDao.getLastActiveLoginData(teamId);
+        }
+        teamDao.closeCurrentSessionwithTransaction();
+        if(UtilMethods.isNotEmpty(lastActive.getSecret())) {
+            Date expirationDate = DateUtils.addDays(new Date(), 3);
+            return new JWTInfo(JWTUtil.createJWT(teamId, lastActive.getSecret(), expirationDate), lastActive.getRefresh(), teamId);
+        } else {
+            return null;
+        }
+    }
+
+    public boolean logout(int teamId) {
+        teamDao.openCurrentSessionwithTransaction();
+        teamDao.invalidatePreviousLoginData(teamId);
+        teamDao.closeCurrentSessionwithTransaction();
+        return true;
+    }
+
+    public boolean checkIfLoggedIn(int teamId) {
+        teamDao.openCurrentSession();
+        boolean loggedIn = teamDao.checkIfLoggedIn(teamId);
+        teamDao.closeCurrentSession();
+        return loggedIn;
+    }
+
 }

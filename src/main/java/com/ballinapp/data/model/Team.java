@@ -54,6 +54,9 @@ public class Team {
 	@Column(name = "city")
 	private String city;
 
+	@Column(name = "password")
+	private String password;
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "team_id", nullable = false)
 	private List<Player> players = new ArrayList<>();
@@ -183,6 +186,14 @@ public class Team {
 
 	public void setPlayers(List<Player> players) {
 		this.players = players;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	@Override

@@ -39,6 +39,7 @@ public class TeamMapper implements CustomMapper<Team, TeamInfo> {
         teamInfo.setActive(team.isActive());
         teamInfo.setEmail(team.getEmail());
         teamInfo.setCity(team.getCity());
+        teamInfo.setPassword("");
         teamInfo.setPlayers(playerMapper.mapToInfoList(team.getPlayers()));
         return teamInfo;
     }
@@ -51,6 +52,7 @@ public class TeamMapper implements CustomMapper<Team, TeamInfo> {
         team.setEmail(teamInfo.getEmail());
         team.setCity(teamInfo.getCity());
         if(MappingTypeEnum.ADD.equals(typeEnum)) {
+            team.setPassword(teamInfo.getPassword());
             team.setOpen(teamInfo.isOpen());
             team.setActive(teamInfo.isActive());
         }
