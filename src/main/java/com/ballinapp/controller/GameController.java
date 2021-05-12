@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 @RestController
 public class GameController {
 
+	//singleton
     private final GameService gameService = GameService.getInstance();
 
     @RequestMapping(value = "/games", method = RequestMethod.POST)
